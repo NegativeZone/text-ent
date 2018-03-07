@@ -6,6 +6,9 @@ import urllib
 import sys
 import os
 import zipfile
+import csv
+
+csv.field_size_limit(sys.maxsize)
 
 glove_zip_file = "glove.6B.zip"
 glove_vectors_file = "glove.6B.50d.txt"
@@ -13,6 +16,8 @@ glove_vectors_file = "glove.6B.50d.txt"
 snli_zip_file = "snli_1.0.zip"
 snli_dev_file = "snli_1.0_dev.txt"
 snli_full_dataset_file = "snli_1.0_train.txt"
+mnli_zip_file = "multinli_1.0.zip"
+mnli_file = "multinli_1.0_train.txt"
 
 from six.moves.urllib.request import urlretrieve
 
@@ -27,6 +32,13 @@ if (not os.path.isfile(snli_zip_file) and
     not os.path.isfile(snli_dev_file)):
     urlretrieve ("https://nlp.stanford.edu/projects/snli/snli_1.0.zip",
                  snli_zip_file)
+
+if (not os.path.isfile(mnli_zip_file) and
+    not os.path.isfile(mnli_file)):
+    urlretrieve ("http://www.nyu.edu/projects/bowman/multinli/multinli_1.0.zip",
+                 mnli_zip_file)
+
+
 
 def unzip_single_file(zip_file_name, output_file_name):
     """
@@ -44,7 +56,14 @@ def unzip_single_file(zip_file_name, output_file_name):
 
 unzip_single_file(glove_zip_file, glove_vectors_file)
 unzip_single_file(snli_zip_file, snli_dev_file)
-# unzip_single_file(snli_zip_file, snli_full_dataset_file)
+unzip_single_file(mnli_zip_file, mnli_file)
+
+filenames = [snli_dev_file, mnli_file]
+with open(snli_dev_file, 'w') as outfile:
+    for fname in filenames:
+        with open(fname) as infile:
+            for line in infile:
+                outfile.write(line)
 
 glove_wordmap = {}
 with open(glove_vectors_file, "r") as glove:

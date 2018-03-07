@@ -6,13 +6,16 @@ import urllib
 import sys
 import os
 import zipfile
+import csv
+
+csv.field_size_limit(sys.maxsize)
 
 sess = tf.Session()
 new_saver = tf.train.import_meta_graph('my-model.meta')
 new_saver.restore(sess, tf.train.latest_checkpoint('./'))
 
 graph = tf.get_default_graph()
-classification_scores = graph.get_tensor_by_name("classification_scores:0")
+classification_scores = graph.get_tensor_by_name
 
 glove_zip_file = "glove.6B.zip"
 glove_vectors_file = "glove.6B.50d.txt"
@@ -93,6 +96,10 @@ def fit_to_size(matrix, shape):
     slices = [slice(0,min(dim,shape[e])) for e, dim in enumerate(matrix.shape)]
     res[slices] = matrix[slices]
     return res
+
+hyp = tf.placeholder(tf.float32, [N, l_h, D], 'hypothesis')
+evi = tf.placeholder(tf.float32, [N, l_e, D], 'evidence')
+
 
 evidences = ["Jim and Bob saw the car crash."]
 
